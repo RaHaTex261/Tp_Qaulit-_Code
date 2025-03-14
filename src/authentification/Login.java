@@ -168,15 +168,13 @@ public class Login extends JFrame {
     }
 
     // Méthode pour valider l'email et le mot de passe avec les données de users.txt
- // Méthode pour valider l'email et le mot de passe avec les données de users.txt
     private boolean validateLogin(String email, String password) {
-        // Vérification que l'email contient un "@" avant de continuer
-        if (!email.contains("@")) {
-            JOptionPane.showMessageDialog(null, "L'email doit contenir un '@'.");
-            return false;
-        }
-        
         try {
+            // Vérification que l'email contient un "@" avant de continuer
+            if (email == null || !email.contains("@")) {
+                throw new CustomException("L'email doit contenir un '@'.");
+            }
+
             // Ouvrir le fichier des utilisateurs en lecture
             BufferedReader reader = new BufferedReader(new FileReader("users.txt"));
             String line;
@@ -202,15 +200,20 @@ public class Login extends JFrame {
 
             // Fermer le fichier après la lecture
             reader.close();
+            throw new CustomException("Email ou mot de passe incorrect.");
+
         } catch (IOException e) {
-            // Gérer les exceptions en cas d'erreur d'accès au fichier
+            // Gérer les erreurs d'accès au fichier
             e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erreur d'accès au fichier des utilisateurs.");
+        } catch (CustomException e) {
+            // Afficher le message d'erreur personnalisé
+            JOptionPane.showMessageDialog(null, e.getMessage());
         }
 
         // Si aucune correspondance n'a été trouvée, retourner false
         return false;
     }
-
 
     // Méthode main corrigée
     public static void main(String[] args) {

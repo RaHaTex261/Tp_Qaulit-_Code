@@ -131,53 +131,50 @@ public class Registration extends JFrame {
         String password = String.valueOf(txtPassword.getPassword()).trim();
         String confirmPassword = String.valueOf(txtConfirmPassword.getPassword()).trim();
 
-        // Vérifier que tous les champs sont remplis
-        if (firstName.equals("Enter your first name") || lastName.equals("Enter your last name") ||
-            email.equals("Enter your email") || password.equals("Enter your password") ||
-            confirmPassword.equals("Confirm password")) {
-            JOptionPane.showMessageDialog(this, "All fields must be filled!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Vérification de l'email
-        if (!email.contains("@") || !email.contains(".")) {
-            JOptionPane.showMessageDialog(this, "Invalid email address! Email must contain '@' and '.'", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Vérification du mot de passe robuste
-        if (!isPasswordStrong(password)) {
-            JOptionPane.showMessageDialog(this, "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Vérification si les mots de passe correspondent
-        if (!password.equals(confirmPassword)) {
-            JOptionPane.showMessageDialog(this, "Passwords do not match!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Vérifier si le fichier users.txt existe
-        File file = new File(FILE_PATH);
-        if (!file.exists()) {
-            try {
-                file.createNewFile(); // Créer le fichier s'il n'existe pas
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "Error creating file!", "Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-                return;
+        try {
+            // Vérifier que tous les champs sont remplis
+            if (firstName.equals("Enter your first name") || lastName.equals("Enter your last name") ||
+                email.equals("Enter your email") || password.equals("Enter your password") ||
+                confirmPassword.equals("Confirm password")) {
+                throw new CustomException("All fields must be filled!");
             }
-        }
 
-        // Sauvegarde dans users.txt
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
-            writer.write(firstName + ";" + lastName + ";" + email + ";" + password);
-            writer.newLine();
-            JOptionPane.showMessageDialog(this, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            resetFields();
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error saving user data!", "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            // Vérification de l'email
+            if (!email.contains("@") || !email.contains(".")) {
+                throw new CustomException("Invalid email address! Email must contain '@' and '.'");
+            }
+
+            // Vérification du mot de passe robuste
+            if (!isPasswordStrong(password)) {
+                throw new CustomException("Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character.");
+            }
+
+            // Vérification si les mots de passe correspondent
+            if (!password.equals(confirmPassword)) {
+                throw new CustomException("Passwords do not match!");
+            }
+
+            // Vérifier si le fichier users.txt existe
+            File file = new File(FILE_PATH);
+            if (!file.exists()) {
+                try {
+                    file.createNewFile(); // Créer le fichier s'il n'existe pas
+                } catch (IOException e) {
+                    throw new CustomException("Error creating file: " + e.getMessage());
+                }
+            }
+
+            // Sauvegarde dans users.txt
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
+                writer.write(firstName + ";" + lastName + ";" + email + ";" + password);
+                writer.newLine();
+                JOptionPane.showMessageDialog(this, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                resetFields();
+            } catch (IOException e) {
+                throw new CustomException("Error saving user data: " + e.getMessage());
+            }
+        } catch (CustomException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -188,7 +185,6 @@ public class Registration extends JFrame {
                password.matches(".*[0-9].*") && // Doit contenir au moins un chiffre
                password.matches(".*[!@#\\$%^&*].*"); // Doit contenir au moins un caractère spécial
     }
-
 
     // Réinitialisation des champs de saisie
     private void resetFields() {

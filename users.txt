@@ -1,4 +1,2 @@
 test;test;test@gmail.com;1234
-test;test;test@gmail.com;1234
-test;test;test@gmail.com;1234
-test;test;test@gmi.com;1234
+

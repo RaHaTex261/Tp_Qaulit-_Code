@@ -3,8 +3,7 @@ package authentification;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.io.*;
 
 public class Login extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -21,15 +20,6 @@ public class Login extends JFrame {
         setSize(400, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        // Configuration de la politique de focus
-        setFocusTraversalPolicy(new DefaultFocusTraversalPolicy() {
-            private static final long serialVersionUID = -5987361414557735538L;
-            @Override
-            public Component getFirstComponent(Container aContainer) {
-                return null;
-            }
-        });
-        
         // Configuration du panel principal avec un layout absolu
         rootPanel = new JPanel();
         rootPanel.setLayout(null);
@@ -41,16 +31,9 @@ public class Login extends JFrame {
         loginPanel.setLayout(null);
         rootPanel.add(loginPanel);
         
-        // Ajout d'un composant temporaire pour le focus
-        JRadioButton tempFocus = new JRadioButton();
-        tempFocus.setFocusable(true);
-        tempFocus.setRequestFocusEnabled(true);
-        tempFocus.setVisible(false);
-        loginPanel.add(tempFocus);
-        
-        // Configuration du champ de texte pour le nom d'utilisateur
+        // Configuration du champ de texte pour le nom d'utilisateur (Email)
         txtUserName = new JTextField();
-        txtUserName.setText("Enter your username");
+        txtUserName.setText("Enter your email");
         txtUserName.setBounds(45, 117, 292, 38);
         txtUserName.setFont(new Font("Arial", Font.PLAIN, 16));
         txtUserName.setBackground(Color.WHITE);
@@ -60,7 +43,7 @@ public class Login extends JFrame {
         txtUserName.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (txtUserName.getText().equals("Enter your username")) {
+                if (txtUserName.getText().equals("Enter your email")) {
                     txtUserName.setText("");
                     txtUserName.setForeground(Color.BLACK);
                 }
@@ -68,7 +51,7 @@ public class Login extends JFrame {
             @Override
             public void focusLost(FocusEvent e) {
                 if (txtUserName.getText().isEmpty()) {
-                    txtUserName.setText("Enter your username");
+                    txtUserName.setText("Enter your email");
                     txtUserName.setForeground(Color.GRAY);
                 }
             }
@@ -129,17 +112,17 @@ public class Login extends JFrame {
         btnSignup.setBackground(Color.RED);
         btnSignup.setForeground(Color.WHITE);
         
-        // Ajout du gestionnaire d'événements pour le bouton
+        // Ajout du gestionnaire d'événements pour le bouton d'inscription
         btnSignup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Création de l'interface Registre
+                // Créer l'interface d'inscription
                 Registration registrationForm = new Registration();
                 registrationForm.setTitle("Registration");
                 registrationForm.setSize(400, 600);
                 registrationForm.setVisible(true);
                 
-                // Fermeture de l'interface Login
+                // Fermer l'interface de login
                 dispose();
             }
         });
@@ -156,15 +139,59 @@ public class Login extends JFrame {
         separator2.setBounds(49, 236, 301, 7);
         loginPanel.add(separator2);
         
-        // Centrage de la fenêtre sur l'écran
+        // Centrer la fenêtre sur l'écran
         setLocationRelativeTo(null);
         
-        // Demande le focus au composant temporaire
+        // Demander le focus au composant temporaire
         SwingUtilities.invokeLater(() -> {
-            tempFocus.requestFocusInWindow();
+            txtUserName.requestFocusInWindow();
+        });
+        
+        // Ajouter l'action de connexion
+        btnSignIn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String email = txtUserName.getText();
+                String password = String.valueOf(txtPassword.getPassword());
+
+                // Valider les informations d'email et mot de passe
+                if (validateLogin(email, password)) {
+                    JOptionPane.showMessageDialog(null, "Vous êtes connecté !");
+                    // Fermer la fenêtre de login après la connexion
+                    dispose();
+                    // Vous pouvez ouvrir la fenêtre principale de l'application ici
+                } else {
+                    JOptionPane.showMessageDialog(null, "Email ou mot de passe incorrect.");
+                }
+            }
         });
     }
-    
+
+    // Méthode pour valider l'email et le mot de passe avec les données de users.txt
+    private boolean validateLogin(String email, String password) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("users.txt"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] user = line.split(";");
+                if (user.length == 4) {  // Assurez-vous qu'il y a bien 4 éléments
+                    String storedEmail = user[2];  // L'email est dans la 3ème position (index 2)
+                    String storedPassword = user[3];  // Le mot de passe est dans la 4ème position (index 3)
+
+                    // Vérifier si l'email et le mot de passe sont corrects
+                    if (storedEmail.equals(email) && storedPassword.equals(password)) {
+                        reader.close();
+                        return true;
+                    }
+                }
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     // Méthode main corrigée
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

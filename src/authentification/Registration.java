@@ -124,7 +124,6 @@ public class Registration extends JFrame {
         return passwordField;
     }
 
-    // Enregistrement de l'utilisateur dans users.txt
     private void registerUser() {
         String firstName = txtFirstName.getText().trim();
         String lastName = txtLastName.getText().trim();
@@ -132,6 +131,7 @@ public class Registration extends JFrame {
         String password = String.valueOf(txtPassword.getPassword()).trim();
         String confirmPassword = String.valueOf(txtConfirmPassword.getPassword()).trim();
 
+        // Vérifier que tous les champs sont remplis
         if (firstName.equals("Enter your first name") || lastName.equals("Enter your last name") ||
             email.equals("Enter your email") || password.equals("Enter your password") ||
             confirmPassword.equals("Confirm password")) {
@@ -139,6 +139,19 @@ public class Registration extends JFrame {
             return;
         }
 
+        // Vérification de l'email
+        if (!email.contains("@") || !email.contains(".")) {
+            JOptionPane.showMessageDialog(this, "Invalid email address! Email must contain '@' and '.'", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Vérification du mot de passe robuste
+        if (!isPasswordStrong(password)) {
+            JOptionPane.showMessageDialog(this, "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Vérification si les mots de passe correspondent
         if (!password.equals(confirmPassword)) {
             JOptionPane.showMessageDialog(this, "Passwords do not match!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -167,6 +180,15 @@ public class Registration extends JFrame {
             e.printStackTrace();
         }
     }
+
+    // Vérification de la robustesse du mot de passe
+    private boolean isPasswordStrong(String password) {
+        return password.length() >= 8 &&
+               password.matches(".*[A-Z].*") && // Doit contenir au moins une majuscule
+               password.matches(".*[0-9].*") && // Doit contenir au moins un chiffre
+               password.matches(".*[!@#\\$%^&*].*"); // Doit contenir au moins un caractère spécial
+    }
+
 
     // Réinitialisation des champs de saisie
     private void resetFields() {

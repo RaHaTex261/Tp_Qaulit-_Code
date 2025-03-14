@@ -168,29 +168,49 @@ public class Login extends JFrame {
     }
 
     // Méthode pour valider l'email et le mot de passe avec les données de users.txt
+ // Méthode pour valider l'email et le mot de passe avec les données de users.txt
     private boolean validateLogin(String email, String password) {
+        // Vérification que l'email contient un "@" avant de continuer
+        if (!email.contains("@")) {
+            JOptionPane.showMessageDialog(null, "L'email doit contenir un '@'.");
+            return false;
+        }
+        
         try {
+            // Ouvrir le fichier des utilisateurs en lecture
             BufferedReader reader = new BufferedReader(new FileReader("users.txt"));
             String line;
-            while ((line = reader.readLine()) != null) {
-                String[] user = line.split(";");
-                if (user.length == 4) {  // Assurez-vous qu'il y a bien 4 éléments
-                    String storedEmail = user[2];  // L'email est dans la 3ème position (index 2)
-                    String storedPassword = user[3];  // Le mot de passe est dans la 4ème position (index 3)
 
-                    // Vérifier si l'email et le mot de passe sont corrects
-                    if (storedEmail.equals(email) && storedPassword.equals(password)) {
+            // Lire chaque ligne du fichier
+            while ((line = reader.readLine()) != null) {
+                // Séparer les éléments de la ligne par le séparateur ";"
+                String[] user = line.split(";");
+
+                // Vérifier que la ligne contient bien 4 éléments (nom, prénom, email, mot de passe)
+                if (user.length == 4) {
+                    String storedEmail = user[2].trim();  // L'email est dans la 3ème position (index 2), en enlevant les espaces
+                    String storedPassword = user[3].trim();  // Le mot de passe est dans la 4ème position (index 3), en enlevant les espaces
+
+                    // Vérifier si l'email et le mot de passe correspondent
+                    if (storedEmail.equalsIgnoreCase(email.trim()) && storedPassword.equals(password.trim())) {
+                        // Si la validation réussit, fermer le fichier et retourner true
                         reader.close();
                         return true;
                     }
                 }
             }
+
+            // Fermer le fichier après la lecture
             reader.close();
         } catch (IOException e) {
+            // Gérer les exceptions en cas d'erreur d'accès au fichier
             e.printStackTrace();
         }
+
+        // Si aucune correspondance n'a été trouvée, retourner false
         return false;
     }
+
 
     // Méthode main corrigée
     public static void main(String[] args) {

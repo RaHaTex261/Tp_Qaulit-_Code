@@ -9,6 +9,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Classe représentant un formulaire d'inscription.
+ * Cette classe permet à un utilisateur de s'inscrire en fournissant son prénom, nom, email et mot de passe.
+ * Les données sont ensuite enregistrées dans un fichier "users.txt".
+ */
 public class Registration extends JFrame {
     private static final long serialVersionUID = 1L;
     private static final String FILE_PATH = "users.txt"; // Fichier de stockage
@@ -20,6 +25,10 @@ public class Registration extends JFrame {
     private JButton btnRegister;
     private JButton btnReset;
 
+    /**
+     * Constructeur qui initialise la fenêtre de l'application avec les champs et boutons nécessaires.
+     * Configure la mise en page, les champs de saisie, les boutons et les actions associées.
+     */
     public Registration() {
         setTitle("Registration");
         setSize(400, 600);
@@ -40,7 +49,7 @@ public class Registration extends JFrame {
         separator1.setBounds(45, 73, 301, 7);
         rootPanel.add(separator1);
 
-        // Champs de saisie
+
         txtFirstName = createTextField("Enter your first name", 45, 117);
         txtLastName = createTextField("Enter your last name", 45, 179);
         txtEmail = createTextField("Enter your email", 45, 241);
@@ -53,7 +62,7 @@ public class Registration extends JFrame {
         rootPanel.add(txtPassword);
         rootPanel.add(txtConfirmPassword);
 
-        // Bouton d'inscription
+        
         btnRegister = new JButton("Register");
         btnRegister.setBounds(50, 425, 292, 38);
         btnRegister.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -62,7 +71,7 @@ public class Registration extends JFrame {
         rootPanel.add(btnRegister);
         btnRegister.addActionListener(e -> registerUser());
 
-        // Bouton de réinitialisation
+       
         btnReset = new JButton("Reset");
         btnReset.setBounds(50, 485, 292, 38);
         btnReset.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -76,7 +85,13 @@ public class Registration extends JFrame {
         rootPanel.add(separator2);
     }
 
-    // Création d'un champ de texte avec un placeholder
+    /**
+     * Crée un champ de texte avec un placeholder et une gestion des événements de focus.
+     * @param placeholder Le texte à afficher lorsque le champ est vide.
+     * @param x La position horizontale du champ.
+     * @param y La position verticale du champ.
+     * @return Un champ de texte prêt à être utilisé.
+     */
     private JTextField createTextField(String placeholder, int x, int y) {
         JTextField textField = new JTextField(placeholder);
         textField.setBounds(x, y, 292, 38);
@@ -100,7 +115,13 @@ public class Registration extends JFrame {
         return textField;
     }
 
-    // Création d'un champ de mot de passe avec un placeholder
+    /**
+     * Crée un champ de mot de passe avec un placeholder et une gestion des événements de focus.
+     * @param placeholder Le texte à afficher lorsque le champ est vide.
+     * @param x La position horizontale du champ.
+     * @param y La position verticale du champ.
+     * @return Un champ de mot de passe prêt à être utilisé.
+     */
     private JPasswordField createPasswordField(String placeholder, int x, int y) {
         JPasswordField passwordField = new JPasswordField(placeholder);
         passwordField.setBounds(x, y, 292, 38);
@@ -124,6 +145,12 @@ public class Registration extends JFrame {
         return passwordField;
     }
 
+    /**
+     * Méthode de gestion de l'inscription de l'utilisateur.
+     * Vérifie que tous les champs sont remplis, que l'email est valide,
+     * que le mot de passe est robuste et que les mots de passe correspondent.
+     * Enregistre les données dans un fichier "users.txt".
+     */
     private void registerUser() {
         String firstName = txtFirstName.getText().trim();
         String lastName = txtLastName.getText().trim();
@@ -132,29 +159,29 @@ public class Registration extends JFrame {
         String confirmPassword = String.valueOf(txtConfirmPassword.getPassword()).trim();
 
         try {
-            // Vérifier que tous les champs sont remplis
+          
             if (firstName.equals("Enter your first name") || lastName.equals("Enter your last name") ||
                 email.equals("Enter your email") || password.equals("Enter your password") ||
                 confirmPassword.equals("Confirm password")) {
                 throw new CustomException("All fields must be filled!");
             }
 
-            // Vérification de l'email
+         
             if (!email.contains("@") || !email.contains(".")) {
                 throw new CustomException("Invalid email address! Email must contain '@' and '.'");
             }
 
-            // Vérification du mot de passe robuste
+           
             if (!isPasswordStrong(password)) {
                 throw new CustomException("Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character.");
             }
 
-            // Vérification si les mots de passe correspondent
+    
             if (!password.equals(confirmPassword)) {
                 throw new CustomException("Passwords do not match!");
             }
 
-            // Vérifier si le fichier users.txt existe
+   
             File file = new File(FILE_PATH);
             if (!file.exists()) {
                 try {
@@ -164,7 +191,7 @@ public class Registration extends JFrame {
                 }
             }
 
-            // Sauvegarde dans users.txt
+     
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
                 writer.write(firstName + ";" + lastName + ";" + email + ";" + password);
                 writer.newLine();
@@ -178,7 +205,13 @@ public class Registration extends JFrame {
         }
     }
 
-    // Vérification de la robustesse du mot de passe
+    /**
+     * Vérifie si le mot de passe respecte les critères de robustesse :
+     * - Minimum 8 caractères
+     * - Contient au moins une majuscule, un chiffre, et un caractère spécial.
+     * @param password Le mot de passe à vérifier.
+     * @return true si le mot de passe est robuste, false sinon.
+     */
     private boolean isPasswordStrong(String password) {
         return password.length() >= 8 &&
                password.matches(".*[A-Z].*") && // Doit contenir au moins une majuscule
@@ -186,7 +219,9 @@ public class Registration extends JFrame {
                password.matches(".*[!@#\\$%^&*].*"); // Doit contenir au moins un caractère spécial
     }
 
-    // Réinitialisation des champs de saisie
+    /**
+     * Réinitialise les champs de saisie du formulaire.
+     */
     private void resetFields() {
         txtFirstName.setText("Enter your first name");
         txtLastName.setText("Enter your last name");
@@ -195,6 +230,11 @@ public class Registration extends JFrame {
         txtConfirmPassword.setText("Confirm password");
     }
 
+    /**
+     * Point d'entrée de l'application.
+     * Lance le formulaire d'inscription dans une nouvelle fenêtre.
+     * @param args Arguments de ligne de commande.
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Registration registrationForm = new Registration();

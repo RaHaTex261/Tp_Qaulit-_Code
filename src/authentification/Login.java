@@ -5,6 +5,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
+/**
+ * Classe représentant la fenêtre de connexion.
+ * Cette classe gère l'interface utilisateur de la page de connexion,
+ * y compris les champs de texte pour le nom d'utilisateur et le mot de passe,
+ * ainsi que les boutons pour la connexion et l'inscription.
+ */
 public class Login extends JFrame {
     private static final long serialVersionUID = 1L;
     private JTextField txtUserName;
@@ -14,24 +20,28 @@ public class Login extends JFrame {
     private JButton btnSignIn;
     private JButton btnSignup;
 
+    /**
+     * Constructeur de la classe Login.
+     * Initialise l'interface graphique de la fenêtre de connexion.
+     */
     public Login() {
-        // Configuration de la fenêtre principale
+        
         setTitle("Login");
         setSize(400, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        // Configuration du panel principal avec un layout absolu
+        
         rootPanel = new JPanel();
         rootPanel.setLayout(null);
         getContentPane().add(rootPanel);
         
-        // Création du panel de connexion
+        
         loginPanel = new JPanel();
         loginPanel.setBounds(-1, -1, 406, 438);
         loginPanel.setLayout(null);
         rootPanel.add(loginPanel);
         
-        // Configuration du champ de texte pour le nom d'utilisateur (Email)
+      
         txtUserName = new JTextField();
         txtUserName.setText("Enter your email");
         txtUserName.setBounds(45, 117, 292, 38);
@@ -39,8 +49,12 @@ public class Login extends JFrame {
         txtUserName.setBackground(Color.WHITE);
         txtUserName.setForeground(Color.BLACK);
         
-        // Gestion du focus pour le champ de texte
+ 
         txtUserName.addFocusListener(new FocusListener() {
+            /**
+             * Gère l'événement lorsque le champ de texte pour l'email reçoit le focus.
+             * Efface le texte par défaut si l'utilisateur clique dans le champ.
+             */
             @Override
             public void focusGained(FocusEvent e) {
                 if (txtUserName.getText().equals("Enter your email")) {
@@ -48,6 +62,11 @@ public class Login extends JFrame {
                     txtUserName.setForeground(Color.BLACK);
                 }
             }
+
+            /**
+             * Gère l'événement lorsque le champ de texte pour l'email perd le focus.
+             * Restaure le texte par défaut si l'utilisateur n'a pas saisi de valeur.
+             */
             @Override
             public void focusLost(FocusEvent e) {
                 if (txtUserName.getText().isEmpty()) {
@@ -58,7 +77,7 @@ public class Login extends JFrame {
         });
         loginPanel.add(txtUserName);
         
-        // Configuration du champ de mot de passe
+
         txtPassword = new JPasswordField();
         txtPassword.setText("Enter your password");
         txtPassword.setBounds(45, 179, 292, 38);
@@ -66,8 +85,12 @@ public class Login extends JFrame {
         txtPassword.setBackground(Color.WHITE);
         txtPassword.setForeground(Color.BLACK);
         
-        // Gestion du focus pour le champ de mot de passe
+        
         txtPassword.addFocusListener(new FocusListener() {
+            /**
+             * Gère l'événement lorsque le champ de mot de passe reçoit le focus.
+             * Efface le texte par défaut si l'utilisateur clique dans le champ.
+             */
             @Override
             public void focusGained(FocusEvent e) {
                 if (String.valueOf(txtPassword.getPassword()).equals("Enter your password")) {
@@ -75,6 +98,11 @@ public class Login extends JFrame {
                     txtPassword.setForeground(Color.BLACK);
                 }
             }
+
+            /**
+             * Gère l'événement lorsque le champ de mot de passe perd le focus.
+             * Restaure le texte par défaut si l'utilisateur n'a pas saisi de valeur.
+             */
             @Override
             public void focusLost(FocusEvent e) {
                 if (String.valueOf(txtPassword.getPassword()).isEmpty()) {
@@ -85,19 +113,19 @@ public class Login extends JFrame {
         });
         loginPanel.add(txtPassword);
         
-        // Ajout du label de titre
+        
         JLabel lblLogin = new JLabel("Login");
         lblLogin.setBounds(45, 28, 100, 30);
         lblLogin.setFont(new Font("Arial Black", Font.BOLD, 23));
         lblLogin.setForeground(new Color(43, 11, 156));
         loginPanel.add(lblLogin);
         
-        // Ajout d'un séparateur horizontal
+        
         JSeparator separator1 = new JSeparator(SwingConstants.HORIZONTAL);
         separator1.setBounds(45, 73, 301, 7);
         loginPanel.add(separator1);
         
-        // Configuration du bouton de connexion
+        
         btnSignIn = new JButton("SignIn");
         btnSignIn.setBounds(50, 285, 292, 38);
         btnSignIn.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -105,15 +133,19 @@ public class Login extends JFrame {
         btnSignIn.setForeground(Color.WHITE);
         loginPanel.add(btnSignIn);
         
-        // Configuration du bouton d'inscription
+        
         btnSignup = new JButton("SignUp");
         btnSignup.setBounds(50, 374, 292, 38);
         btnSignup.setFont(new Font("Arial", Font.PLAIN, 16));
         btnSignup.setBackground(Color.RED);
         btnSignup.setForeground(Color.WHITE);
         
-        // Ajout du gestionnaire d'événements pour le bouton d'inscription
+        
         btnSignup.addActionListener(new ActionListener() {
+            /**
+             * Gère l'événement lors du clic sur le bouton d'inscription.
+             * Ouvre le formulaire d'inscription et ferme la fenêtre de connexion.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Créer l'interface d'inscription
@@ -122,44 +154,48 @@ public class Login extends JFrame {
                 registrationForm.setSize(400, 600);
                 registrationForm.setVisible(true);
                 
-                // Fermer l'interface de login
+               
                 dispose();
             }
         });
         loginPanel.add(btnSignup);
         
-        // Ajout du label "OR" entre les boutons
+        
         JLabel lblOr = new JLabel("OR");
         lblOr.setBounds(179, 331, 100, 30);
         lblOr.setFont(new Font("Arial Black", Font.BOLD, 16));
         loginPanel.add(lblOr);
         
-        // Ajout d'un second séparateur horizontal
+      
         JSeparator separator2 = new JSeparator(SwingConstants.HORIZONTAL);
         separator2.setBounds(49, 236, 301, 7);
         loginPanel.add(separator2);
         
-        // Centrer la fenêtre sur l'écran
+        
         setLocationRelativeTo(null);
         
-        // Demander le focus au composant temporaire
+
         SwingUtilities.invokeLater(() -> {
             txtUserName.requestFocusInWindow();
         });
         
-        // Ajouter l'action de connexion
+
         btnSignIn.addActionListener(new ActionListener() {
+            /**
+             * Gère l'événement lors du clic sur le bouton de connexion.
+             * Valide l'email et le mot de passe et affiche un message de connexion réussi ou échoué.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 String email = txtUserName.getText();
                 String password = String.valueOf(txtPassword.getPassword());
 
-                // Valider les informations d'email et mot de passe
+               
                 if (validateLogin(email, password)) {
                     JOptionPane.showMessageDialog(null, "Vous êtes connecté !");
-                    // Fermer la fenêtre de login après la connexion
+                   
                     dispose();
-                    // Vous pouvez ouvrir la fenêtre principale de l'application ici
+                   
                 } else {
                     JOptionPane.showMessageDialog(null, "Email ou mot de passe incorrect.");
                 }
@@ -167,55 +203,62 @@ public class Login extends JFrame {
         });
     }
 
-    // Méthode pour valider l'email et le mot de passe avec les données de users.txt
+    /**
+     * Méthode pour valider l'email et le mot de passe avec les données de users.txt.
+     * @param email L'email à valider.
+     * @param password Le mot de passe à valider.
+     * @return true si les informations de connexion sont correctes, false sinon.
+     */
     private boolean validateLogin(String email, String password) {
         try {
-            // Vérification que l'email contient un "@" avant de continuer
+           
             if (email == null || !email.contains("@")) {
                 throw new CustomException("L'email doit contenir un '@'.");
             }
 
-            // Ouvrir le fichier des utilisateurs en lecture
+
             BufferedReader reader = new BufferedReader(new FileReader("users.txt"));
             String line;
 
-            // Lire chaque ligne du fichier
+   
             while ((line = reader.readLine()) != null) {
-                // Séparer les éléments de la ligne par le séparateur ";"
+                
                 String[] user = line.split(";");
 
-                // Vérifier que la ligne contient bien 4 éléments (nom, prénom, email, mot de passe)
+                
                 if (user.length == 4) {
-                    String storedEmail = user[2].trim();  // L'email est dans la 3ème position (index 2), en enlevant les espaces
-                    String storedPassword = user[3].trim();  // Le mot de passe est dans la 4ème position (index 3), en enlevant les espaces
-
-                    // Vérifier si l'email et le mot de passe correspondent
+                    String storedEmail = user[2].trim();  
+                    String storedPassword = user[3].trim();  
+                    
                     if (storedEmail.equalsIgnoreCase(email.trim()) && storedPassword.equals(password.trim())) {
-                        // Si la validation réussit, fermer le fichier et retourner true
+                       
                         reader.close();
                         return true;
                     }
                 }
             }
 
-            // Fermer le fichier après la lecture
+            
             reader.close();
             throw new CustomException("Email ou mot de passe incorrect.");
 
         } catch (IOException e) {
-            // Gérer les erreurs d'accès au fichier
+            
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Erreur d'accès au fichier des utilisateurs.");
         } catch (CustomException e) {
-            // Afficher le message d'erreur personnalisé
+            
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
 
-        // Si aucune correspondance n'a été trouvée, retourner false
+        
         return false;
     }
 
-    // Méthode main corrigée
+    /**
+     * Méthode main pour démarrer l'application de connexion.
+     * @param args Arguments de la ligne de commande (non utilisés).
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Login loginForm = new Login();

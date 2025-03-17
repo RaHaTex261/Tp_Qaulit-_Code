@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class Registration extends JFrame {
     private static final long serialVersionUID = 1L;
-    private static final String FILE_PATH = "users.txt"; // Fichier de stockage
+    private static final String FILE_PATH = "auth.db"; // Fichier de stockage
     private JTextField txtFirstName;
     private JTextField txtLastName;
     private JTextField txtEmail;

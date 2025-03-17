@@ -1,1 +1,1 @@
-typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"authentification","l":"CustomException"},{"p":"authentification","l":"Login"},{"p":"authentification","l":"Registration"}];updateSearchResults();
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"authentification","l":"CustomException"},{"p":"authentification","l":"Database"},{"p":"authentification","l":"Login"},{"p":"authentification","l":"Registration"}];updateSearchResults();

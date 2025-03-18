@@ -16,11 +16,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2  # Vérifie le code source du dépôt
 
-    - name: Set up JDK 23
+    - name: Set up Zulu JDK 23
       uses: actions/setup-java@v2  # Utilise l'action setup-java pour installer JDK
       with:
         java-version: '23'  # Spécifie que vous voulez utiliser JDK 23.0.2
-        distribution: 'adoptopenjdk'  # Utilisation d'AdoptOpenJDK, ou vous pouvez utiliser d'autres distributions comme Zulu OpenJDK ou Amazon Corretto
+        distribution: 'zulu'  # Utilisation de la distribution Zulu OpenJDK
 
     - name: Install SQLite JDBC Driver
       run: |
@@ -43,11 +43,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2  # Vérifie à nouveau le code
 
-    - name: Set up JDK 23
+    - name: Set up Zulu JDK 23
       uses: actions/setup-java@v2  # Installe JDK 23
       with:
         java-version: '23'  # Spécifie la version de JDK
-        distribution: 'adoptopenjdk'  # Utilisation de la distribution AdoptOpenJDK
+        distribution: 'zulu'  # Utilisation de la distribution Zulu OpenJDK
 
     - name: Build and package the application
       run: |

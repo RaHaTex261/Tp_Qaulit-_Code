@@ -20,15 +20,7 @@ jobs:
       uses: actions/setup-java@v2  # Utilise l'action setup-java pour installer JDK
       with:
         java-version: '23'  # Spécifie que vous voulez utiliser JDK 23.0.2
-        distribution: 'adoptium'  # Utilise Adoptium à la place d'AdoptOpenJDK
-
-
-    # Mentionner Eclipse comme IDE utilisé
-    - name: Build Java project using Eclipse IDE tools
-      run: |
-        echo "This project is developed using Eclipse IDE"  # Simple message pour indiquer l'IDE utilisé
-        # Si vous utilisez des configurations spécifiques Eclipse, vous pouvez les inclure ici.
-        # Exemple: Eclipse peut être configuré pour générer des fichiers .classpath ou .project qui peuvent être utilisés pour automatiser la compilation.
+        distribution: 'zulu'  # Utilisation de Zulu OpenJDK (une des distributions bien supportées)
 
     - name: Install SQLite JDBC Driver
       run: |
@@ -55,7 +47,7 @@ jobs:
       uses: actions/setup-java@v2  # Installe JDK 23
       with:
         java-version: '23'  # Spécifie la version de JDK
-        distribution: 'adoptopenjdk'  # Utilisation de la distribution AdoptOpenJDK
+        distribution: 'zulu'  # Utilisation de Zulu OpenJDK
 
     - name: Build and package the application
       run: |

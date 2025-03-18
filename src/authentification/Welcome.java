@@ -5,11 +5,42 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.*;
 
+/**
+ * Cette classe représente l'interface utilisateur de bienvenue après qu'un utilisateur se soit connecté.
+ * Elle permet à l'utilisateur de voir son adresse e-mail, de se déconnecter, de modifier ses informations
+ * ou de supprimer son compte.
+ * 
+ * @author TEX BELOHA
+ * @version 2025
+ */
 public class Welcome extends JFrame {
-    private static final long serialVersionUID = 1L;
-    private String userEmail;
-    String dbUrl = "jdbc:sqlite:auth.sqlite";
+	/**
+	 * UID pour la sérialisation de la classe. Il est nécessaire pour la gestion
+	 * des versions de la classe lors de la sérialisation/désérialisation.
+	 */
+	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Adresse e-mail de l'utilisateur.
+	 * Cette variable stocke l'adresse e-mail de l'utilisateur connecté, 
+	 * ce qui permet de l'afficher dans l'interface utilisateur ou de l'utiliser 
+	 * pour les opérations liées à l'utilisateur.
+	 */
+	private String userEmail;
+
+	/**
+	 * URL de connexion à la base de données SQLite.
+	 * Cette URL spécifie le chemin de la base de données 'auth.sqlite' qui est utilisée 
+	 * pour stocker les informations des utilisateurs, comme leurs informations de connexion.
+	 */
+	String dbUrl = "jdbc:sqlite:auth.sqlite";
+
+
+    /**
+     * Constructeur de la classe Welcome.
+     * 
+     * @param userEmail L'adresse e-mail de l'utilisateur qui s'est connecté.
+     */
     public Welcome(String userEmail) { 
         this.userEmail = userEmail; // Assigner correctement l'email
 
@@ -48,8 +79,7 @@ public class Welcome extends JFrame {
         modifyMenuItem.addActionListener(e -> {
             dispose(); // Ferme la fenêtre Welcome
             SwingUtilities.invokeLater(() -> {
-            	Modification modificationForm = new Modification(userEmail);
-
+                Modification modificationForm = new Modification(userEmail);
                 modificationForm.setVisible(true);
             });
         });
@@ -81,6 +111,12 @@ public class Welcome extends JFrame {
         setJMenuBar(menuBar);
     }
 
+    /**
+     * Supprime un utilisateur de la base de données en fonction de son adresse e-mail.
+     * 
+     * @param email L'adresse e-mail de l'utilisateur à supprimer.
+     * @return true si l'utilisateur a été supprimé avec succès, false sinon.
+     */
     private boolean deleteUser(String email) {
         if (email == null || email.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Aucun utilisateur sélectionné.", "Erreur", JOptionPane.WARNING_MESSAGE);
@@ -101,6 +137,11 @@ public class Welcome extends JFrame {
         }
     }
 
+    /**
+     * Point d'entrée principal de l'application pour tester la classe Welcome.
+     * 
+     * @param args Arguments de ligne de commande (non utilisés ici).
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Welcome("test@example.com").setVisible(true));
     }

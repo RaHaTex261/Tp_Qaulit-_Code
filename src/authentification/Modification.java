@@ -10,20 +10,72 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
+/**
+ * Classe représentant la fenêtre de modification des informations utilisateur.
+ * Cette classe permet à l'utilisateur de modifier ses informations, telles que 
+ * son prénom, son nom, son email, et son mot de passe.
+ * Elle inclut des champs de texte pour la saisie des nouvelles informations et 
+ * des boutons pour sauvegarder ou annuler les modifications.
+ * 
+ * @author TEX BELOHA &amp; David
+ * @version 2025
+ */
 public class Modification extends JFrame {
-    private static final long serialVersionUID = 1L;
+	 /**
+     * Chemin d'accès au fichier de base de données SQLite.
+     */
     private static final String FILE_PATH = "auth.sqlite";
+
+    /**
+     * URL de la base de données pour la connexion JDBC.
+     */
     private static final String DB_URL = "jdbc:sqlite:" + FILE_PATH;
+
+    /**
+     * Connexion à la base de données SQLite.
+     */
     private static Connection conn;
-    
+
+    /**
+     * Champ de texte permettant à l'utilisateur de saisir son prénom.
+     */
     private JTextField txtFirstName;
+
+    /**
+     * Champ de texte permettant à l'utilisateur de saisir son nom de famille.
+     */
     private JTextField txtLastName;
+
+    /**
+     * Champ de texte permettant à l'utilisateur de saisir son adresse e-mail.
+     */
     private JTextField txtEmail;
+
+    /**
+     * Champ de texte permettant à l'utilisateur de saisir son mot de passe.
+     */
     private JPasswordField txtPassword;
+
+    /**
+     * Champ de texte permettant à l'utilisateur de confirmer son mot de passe.
+     */
     private JPasswordField txtConfirmPassword;
+
+    /**
+     * Bouton permettant à l'utilisateur de s'inscrire.
+     */
     private JButton btnRegister;
+
+    /**
+     * Bouton permettant à l'utilisateur de réinitialiser les champs de saisie.
+     */
     private JButton btnReset;
-    
+    /**
+     * Variable pour stocker l'identifiant unique de l'utilisateur.
+     * Cet ID est utilisé pour identifier un utilisateur spécifique dans la base de données
+     * ou dans l'application pour modifier ou récupérer ses informations.
+     */
     private int userId;  // Variable pour stocker l'ID de l'utilisateur
 
     static Connection getConnection() {
@@ -70,6 +122,14 @@ public class Modification extends JFrame {
         }
     }
 
+    /**
+     * Constructeur de la classe Modification.
+     * Ce constructeur initialise la fenêtre de modification avec les informations
+     * de l'utilisateur spécifié par son identifiant.
+     * 
+     * @param userId L'identifiant de l'utilisateur dont les informations sont à modifier.
+     */
+    
     public Modification(int userId) {
         this.userId = userId;  // Stocke l'ID de l'utilisateur
         setTitle("Modification");
@@ -129,6 +189,14 @@ public class Modification extends JFrame {
         loadUserData(userId);  // Charge les informations de l'utilisateur dans les champs
     }
 
+    /**
+     * Constructeur de la classe Modification.
+     * Ce constructeur initialise la fenêtre de modification avec les informations
+     * de l'utilisateur spécifié par son adresse e-mail.
+     * 
+     * @param userEmail L'adresse e-mail de l'utilisateur dont les informations sont à modifier.
+     */
+    
     public Modification(String userEmail) {
 		// TODO Auto-generated constructor stub
 	}
@@ -271,7 +339,14 @@ public class Modification extends JFrame {
         });
         return passwordField;
     }
-
+    
+    /**
+     * Méthode principale qui lance l'application de modification des informations utilisateur.
+     * Elle crée une instance de la fenêtre de modification et la rend visible.
+     * 
+     * @param args Arguments de la ligne de commande (non utilisés ici).
+     */
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Modification modification = new Modification(1); // Exemple avec l'ID de l'utilisateur

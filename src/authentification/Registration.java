@@ -9,20 +9,91 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Registration extends JFrame {
-    private static final long serialVersionUID = 1L;
-    private static final String FILE_PATH = "auth.sqlite";
-    private static final String DB_URL = "jdbc:sqlite:" + FILE_PATH;
-    private static Connection conn;
-    
-    private JTextField txtFirstName;
-    private JTextField txtLastName;
-    private JTextField txtEmail;
-    private JPasswordField txtPassword;
-    private JPasswordField txtConfirmPassword;
-    private JButton btnRegister;
-    private JButton btnReset;
+/**
+ * 
+ * Classe représentant un formulaire d'inscription pour l'application.
+ * Cette classe gère l'interface utilisateur permettant à un utilisateur de s'inscrire
+ * en renseignant son prénom, son nom, son adresse e-mail, et son mot de passe.
+ * Elle inclut des champs de texte pour la saisie des informations et des boutons
+ * pour soumettre le formulaire d'inscription ou réinitialiser les champs.
+ * Le formulaire vérifie également la validité des informations avant de les enregistrer.
+ * 
+ * @author TEX BELOHA
+ * @version 2025
+ */
 
+public class Registration extends JFrame {
+	/**
+	 * UID pour la sérialisation de la classe (obligatoire pour certaines opérations de sérialisation).
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Chemin d'accès au fichier de base de données SQLite.
+	 * Ce fichier contient les informations nécessaires pour la gestion des utilisateurs.
+	 */
+	private static final String FILE_PATH = "auth.sqlite";
+
+	/**
+	 * URL de connexion à la base de données SQLite, utilisant le chemin spécifié ci-dessus.
+	 * Cette URL est utilisée pour établir une connexion avec la base de données.
+	 */
+	private static final String DB_URL = "jdbc:sqlite:" + FILE_PATH;
+
+	/**
+	 * Objet de connexion à la base de données.
+	 * Cet objet est utilisé pour effectuer des opérations de base de données.
+	 */
+	private static Connection conn;
+
+	/**
+	 * Champ de texte pour la saisie du prénom de l'utilisateur.
+	 * L'utilisateur entre son prénom lors de l'inscription.
+	 */
+	private JTextField txtFirstName;
+
+	/**
+	 * Champ de texte pour la saisie du nom de famille de l'utilisateur.
+	 * L'utilisateur entre son nom de famille lors de l'inscription.
+	 */
+	private JTextField txtLastName;
+
+	/**
+	 * Champ de texte pour la saisie de l'email de l'utilisateur.
+	 * L'utilisateur entre son adresse e-mail lors de l'inscription.
+	 */
+	private JTextField txtEmail;
+
+	/**
+	 * Champ de texte pour la saisie du mot de passe de l'utilisateur.
+	 * L'utilisateur entre son mot de passe lors de l'inscription.
+	 */
+	private JPasswordField txtPassword;
+
+	/**
+	 * Champ de texte pour la saisie de la confirmation du mot de passe.
+	 * L'utilisateur doit entrer à nouveau son mot de passe pour confirmation.
+	 */
+	private JPasswordField txtConfirmPassword;
+
+	/**
+	 * Bouton pour soumettre le formulaire d'inscription.
+	 * Lorsque l'utilisateur clique dessus, ses informations sont enregistrées.
+	 */
+	private JButton btnRegister;
+
+	/**
+	 * Bouton pour réinitialiser le formulaire d'inscription.
+	 * Lorsque l'utilisateur clique dessus, tous les champs sont réinitialisés.
+	 */
+	private JButton btnReset;
+
+
+    /**
+     * Établit une connexion à la base de données SQLite.
+     * 
+     * @return La connexion à la base de données.
+     */
     static Connection getConnection() {
         try {
             if (conn == null || conn.isClosed()) {
@@ -36,6 +107,9 @@ public class Registration extends JFrame {
         }
     }
 
+    /**
+     * Ferme la connexion à la base de données.
+     */
     private static void closeConnection() {
         try {
             if (conn != null && !conn.isClosed()) {
@@ -47,6 +121,9 @@ public class Registration extends JFrame {
         }
     }
 
+    /**
+     * Crée la table 'utilisateurs' si elle n'existe pas dans la base de données.
+     */
     private void createTable() {
         String sql = """
             CREATE TABLE IF NOT EXISTS utilisateurs (
@@ -67,6 +144,9 @@ public class Registration extends JFrame {
         }
     }
 
+    /**
+     * Constructeur de la classe Registration. Configure l'interface graphique et initialise les composants.
+     */
     public Registration() {
         setTitle("Registration");
         setSize(400, 610);
@@ -118,6 +198,9 @@ public class Registration extends JFrame {
         createTable();
     }
 
+    /**
+     * Valide et enregistre les informations de l'utilisateur dans la base de données.
+     */
     private void registerUser() {
         // Validation des champs
         String firstName = txtFirstName.getText().trim();
@@ -191,9 +274,15 @@ public class Registration extends JFrame {
         }
     }
 
-	
-
-	private JTextField createTextField(String placeholder, int x, int y) {
+    /**
+     * Crée un champ de texte avec un texte d'espace réservé et un gestionnaire d'événements pour la mise à jour du texte.
+     * 
+     * @param placeholder Le texte d'espace réservé affiché dans le champ de texte.
+     * @param x La position en x du champ de texte.
+     * @param y La position en y du champ de texte.
+     * @return Le champ de texte créé.
+     */
+    private JTextField createTextField(String placeholder, int x, int y) {
         JTextField textField = new JTextField(placeholder);
         textField.setBounds(x, y, 292, 38);
         textField.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -215,6 +304,14 @@ public class Registration extends JFrame {
         return textField;
     }
 
+    /**
+     * Crée un champ de mot de passe avec un texte d'espace réservé et un gestionnaire d'événements pour la mise à jour du texte.
+     * 
+     * @param placeholder Le texte d'espace réservé affiché dans le champ de mot de passe.
+     * @param x La position en x du champ de mot de passe.
+     * @param y La position en y du champ de mot de passe.
+     * @return Le champ de mot de passe créé.
+     */
     private JPasswordField createPasswordField(String placeholder, int x, int y) {
         JPasswordField passwordField = new JPasswordField(placeholder);
         passwordField.setBounds(x, y, 292, 38);
@@ -235,6 +332,9 @@ public class Registration extends JFrame {
         return passwordField;
     }
 
+    /**
+     * Réinitialise les champs de saisie du formulaire.
+     */
     private void resetFields() {
         txtFirstName.setText("Enter your first name");
         txtLastName.setText("Enter your last name");
@@ -243,6 +343,11 @@ public class Registration extends JFrame {
         txtConfirmPassword.setText("Confirm password");
     }
 
+    /**
+     * Méthode principale qui lance l'application en affichant le formulaire d'inscription.
+     * 
+     * @param args Les arguments de la ligne de commande (non utilisés ici).
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Registration registrationForm = new Registration();

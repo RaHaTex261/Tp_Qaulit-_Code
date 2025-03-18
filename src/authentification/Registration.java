@@ -119,68 +119,78 @@ public class Registration extends JFrame {
     }
 
     private void registerUser() {
-    	    // Validation des champs
-    	    String firstName = txtFirstName.getText().trim();
-    	    String lastName = txtLastName.getText().trim();
-    	    String email = txtEmail.getText().trim();
-    	    
-    	    // Vérification du mot de passe
-    	    String password = new String(txtPassword.getPassword()).trim();
-    	    String confirmPassword = new String(txtConfirmPassword.getPassword()).trim();
-    	    
-    	    // Validation des entrées
-    	    if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
-    	        JOptionPane.showMessageDialog(this, 
-    	            "Veuillez remplir tous les champs requis", 
-    	            "Erreur de validation", 
-    	            JOptionPane.ERROR_MESSAGE);
-    	        return;
-    	    }
-    	    
-    	    if (!password.equals(confirmPassword)) {
-    	        JOptionPane.showMessageDialog(this, 
-    	            "Les mots de passe ne correspondent pas", 
-    	            "Erreur de validation", 
-    	            JOptionPane.ERROR_MESSAGE);
-    	        return;
-    	    }
-    	    
-    	    // Préparation et exécution de la requête d'insertion
-    	    String sql = """
-    	        INSERT INTO utilisateurs (first_name, last_name, email, password)
-    	        VALUES (?, ?, ?, ?)
-    	        """;
-    	    
-    	    try (Connection conn = getConnection();
-    	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
-    	            
-    	        pstmt.setString(1, firstName);
-    	        pstmt.setString(2, lastName);
-    	        pstmt.setString(3, email);
-    	        pstmt.setString(4, password);
-    	        
-    	        int rowsAffected = pstmt.executeUpdate();
-    	        
-    	        if (rowsAffected > 0) {
-    	            JOptionPane.showMessageDialog(this, 
-    	                "Enregistrement réussi!", 
-    	                "Succès", 
-    	                JOptionPane.INFORMATION_MESSAGE);
-    	            resetFields(); // Réinitialisation des champs après un enregistrement réussi
-    	        } else {
-    	            JOptionPane.showMessageDialog(this, 
-    	                "Échec de l'enregistrement", 
-    	                "Erreur", 
-    	                JOptionPane.ERROR_MESSAGE);
-    	        }
-    	            
-    	    } catch (SQLException e) {
-    	        JOptionPane.showMessageDialog(this, 
-    	            "Erreur lors de l'enregistrement : " + e.getMessage(), 
-    	            "Erreur", 
-    	            JOptionPane.ERROR_MESSAGE);
-    	    }
-    	}
+        // Validation des champs
+        String firstName = txtFirstName.getText().trim();
+        String lastName = txtLastName.getText().trim();
+        String email = txtEmail.getText().trim();
+        
+        // Vérification du mot de passe
+        String password = new String(txtPassword.getPassword()).trim();
+        String confirmPassword = new String(txtConfirmPassword.getPassword()).trim();
+        
+        // Validation des entrées
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Veuillez remplir tous les champs requis", 
+                "Erreur de validation", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Vérification que le prénom et le nom contiennent uniquement des lettres
+        if (!firstName.matches("[a-zA-Z]+") || !lastName.matches("[a-zA-Z]+")) {
+            JOptionPane.showMessageDialog(this, 
+                "Le prénom et le nom ne doivent contenir que des lettres", 
+                "Erreur de validation", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (!password.equals(confirmPassword)) {
+            JOptionPane.showMessageDialog(this, 
+                "Les mots de passe ne correspondent pas", 
+                "Erreur de validation", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Préparation et exécution de la requête d'insertion
+        String sql = """
+            INSERT INTO utilisateurs (first_name, last_name, email, password)
+            VALUES (?, ?, ?, ?)
+            """;
+        
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                
+            pstmt.setString(1, firstName);
+            pstmt.setString(2, lastName);
+            pstmt.setString(3, email);
+            pstmt.setString(4, password);
+            
+            int rowsAffected = pstmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                JOptionPane.showMessageDialog(this, 
+                    "Enregistrement réussi!", 
+                    "Succès", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                resetFields(); // Réinitialisation des champs après un enregistrement réussi
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Échec de l'enregistrement", 
+                    "Erreur", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+                
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, 
+                "Erreur lors de l'enregistrement : " + e.getMessage(), 
+                "Erreur", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 	
 
 	private JTextField createTextField(String placeholder, int x, int y) {

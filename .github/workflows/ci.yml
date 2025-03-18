@@ -1,0 +1,73 @@
+name: Java CI/CD for SQLite and Swing Project
+
+on:
+  push:
+    branches:
+      - main  # Le workflow se déclenche lors d'un push sur la branche 'main'
+  pull_request:
+    branches:
+      - main  # Ou lors d'une pull request vers la branche 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Utilise la dernière version stable d'Ubuntu
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2  # Vérifie le code source du dépôt
+
+    - name: Set up JDK 23
+      uses: actions/setup-java@v2  # Utilise l'action setup-java pour installer JDK
+      with:
+        java-version: '23'  # Spécifie que vous voulez utiliser JDK 23.0.2
+        distribution: 'adoptopenjdk'  # Utilisation d'AdoptOpenJDK, ou vous pouvez utiliser d'autres distributions comme Zulu OpenJDK ou Amazon Corretto
+
+    # Mentionner Eclipse comme IDE utilisé
+    - name: Build Java project using Eclipse IDE tools
+      run: |
+        echo "This project is developed using Eclipse IDE"  # Simple message pour indiquer l'IDE utilisé
+        # Si vous utilisez des configurations spécifiques Eclipse, vous pouvez les inclure ici.
+        # Exemple: Eclipse peut être configuré pour générer des fichiers .classpath ou .project qui peuvent être utilisés pour automatiser la compilation.
+
+    - name: Install SQLite JDBC Driver
+      run: |
+        wget https://github.com/xerial/sqlite-jdbc/releases/download/3.42.0.0/sqlite-jdbc-3.42.0.0.jar  # Télécharge le driver JDBC pour SQLite
+
+    - name: Compile Java files
+      run: |
+        mkdir -p bin  # Crée le répertoire bin pour les fichiers compilés
+        javac -d bin -cp ".:sqlite-jdbc-3.42.0.0.jar" src/*.java  # Compile les fichiers .java avec le driver SQLite
+
+    - name: Run tests
+      run: |
+        java -cp ".:bin:sqlite-jdbc-3.42.0.0.jar" org.junit.runner.JUnitCore TestClassName  # Exécute vos tests avec le driver JDBC SQLite
+
+  deploy:
+    needs: build  # Assure que l'étape de déploiement se fait uniquement après que le build soit terminé avec succès
+    runs-on: ubuntu-latest  # Utilise également la dernière version stable d'Ubuntu
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2  # Vérifie à nouveau le code
+
+    - name: Set up JDK 23
+      uses: actions/setup-java@v2  # Installe JDK 23
+      with:
+        java-version: '23'  # Spécifie la version de JDK
+        distribution: 'adoptopenjdk'  # Utilisation de la distribution AdoptOpenJDK
+
+    - name: Build and package the application
+      run: |
+        mkdir -p bin
+        javac -d bin -cp ".:sqlite-jdbc-3.42.0.0.jar" src/*.java  # Compile les fichiers source Java
+
+    - name: Create JAR package
+      run: |
+        jar -cvf my-app.jar -C bin/ .  # Crée un fichier JAR contenant les fichiers compilés
+
+    - name: Deploy to Server or Cloud
+      run: |
+        scp my-app.jar username@your-server:/path/to/deployment/folder  # Déploie l'application sur un serveur via SCP (ajustez selon votre serveur et destination)
+        # OU
+        # Si vous déployez sur un service comme AWS, Azure, ou Google Cloud, vous pouvez utiliser leurs CLI pour déployer
+        # aws s3 cp my-app.jar s3://your-bucket-name/

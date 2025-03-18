@@ -7,6 +7,7 @@ import java.awt.event.FocusListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Modification extends JFrame {
@@ -22,6 +23,8 @@ public class Modification extends JFrame {
     private JPasswordField txtConfirmPassword;
     private JButton btnRegister;
     private JButton btnReset;
+    
+    private int userId;  // Variable pour stocker l'ID de l'utilisateur
 
     static Connection getConnection() {
         try {
@@ -67,7 +70,8 @@ public class Modification extends JFrame {
         }
     }
 
-    public Modification() {
+    public Modification(int userId) {
+        this.userId = userId;  // Stocke l'ID de l'utilisateur
         setTitle("Modification");
         setSize(400, 610);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -122,74 +126,111 @@ public class Modification extends JFrame {
         });
         
         createTable();
+        loadUserData(userId);  // Charge les informations de l'utilisateur dans les champs
+    }
+
+    public Modification(String userEmail) {
+		// TODO Auto-generated constructor stub
+	}
+
+	private void loadUserData(int userId) {
+        String sql = "SELECT first_name, last_name, email, password FROM utilisateurs WHERE id = ?";
+        
+        try (Connection conn = getConnection(); 
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, userId);  // Définit l'ID de l'utilisateur dans la requête
+            
+            ResultSet resultSet = pstmt.executeQuery();
+            
+            if (resultSet.next()) {
+                // Récupérer les informations et les afficher dans les champs
+                txtFirstName.setText(resultSet.getString("first_name"));
+                txtLastName.setText(resultSet.getString("last_name"));
+                txtEmail.setText(resultSet.getString("email"));
+                txtPassword.setText(resultSet.getString("password"));  // Assurez-vous que c'est bien le bon format
+                txtConfirmPassword.setText(resultSet.getString("password"));  // Mettre la même valeur pour la confirmation du mot de passe
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Utilisateur introuvable", 
+                    "Erreur", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, 
+                "Erreur lors du chargement des données : " + e.getMessage(), 
+                "Erreur", 
+                JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void registerUser() {
-    	    // Validation des champs
-    	    String firstName = txtFirstName.getText().trim();
-    	    String lastName = txtLastName.getText().trim();
-    	    String email = txtEmail.getText().trim();
-    	    
-    	    // Vérification du mot de passe
-    	    String password = new String(txtPassword.getPassword()).trim();
-    	    String confirmPassword = new String(txtConfirmPassword.getPassword()).trim();
-    	    
-    	    // Validation des entrées
-    	    if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
-    	        JOptionPane.showMessageDialog(this, 
-    	            "Veuillez remplir tous les champs requis", 
-    	            "Erreur de validation", 
-    	            JOptionPane.ERROR_MESSAGE);
-    	        return;
-    	    }
-    	    
-    	    if (!password.equals(confirmPassword)) {
-    	        JOptionPane.showMessageDialog(this, 
-    	            "Les mots de passe ne correspondent pas", 
-    	            "Erreur de validation", 
-    	            JOptionPane.ERROR_MESSAGE);
-    	        return;
-    	    }
-    	    
-    	    // Préparation et exécution de la requête d'insertion
-    	    String sql = """
-    	        INSERT INTO utilisateurs (first_name, last_name, email, password)
-    	        VALUES (?, ?, ?, ?)
-    	        """;
-    	    
-    	    try (Connection conn = getConnection();
-    	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
-    	            
-    	        pstmt.setString(1, firstName);
-    	        pstmt.setString(2, lastName);
-    	        pstmt.setString(3, email);
-    	        pstmt.setString(4, password);
-    	        
-    	        int rowsAffected = pstmt.executeUpdate();
-    	        
-    	        if (rowsAffected > 0) {
-    	            JOptionPane.showMessageDialog(this, 
-    	                "Enregistrement réussi!", 
-    	                "Succès", 
-    	                JOptionPane.INFORMATION_MESSAGE);
-    	          
-    	        } else {
-    	            JOptionPane.showMessageDialog(this, 
-    	                "Échec de l'enregistrement", 
-    	                "Erreur", 
-    	                JOptionPane.ERROR_MESSAGE);
-    	        }
-    	            
-    	    } catch (SQLException e) {
-    	        JOptionPane.showMessageDialog(this, 
-    	            "Erreur lors de l'enregistrement : " + e.getMessage(), 
-    	            "Erreur", 
-    	            JOptionPane.ERROR_MESSAGE);
-    	    }
-    	}
-	
+        // Validation des champs
+        String firstName = txtFirstName.getText().trim();
+        String lastName = txtLastName.getText().trim();
+        String email = txtEmail.getText().trim();
+        
+        // Vérification du mot de passe
+        String password = new String(txtPassword.getPassword()).trim();
+        String confirmPassword = new String(txtConfirmPassword.getPassword()).trim();
+        
+        // Validation des entrées
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Veuillez remplir tous les champs requis", 
+                "Erreur de validation", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (!password.equals(confirmPassword)) {
+            JOptionPane.showMessageDialog(this, 
+                "Les mots de passe ne correspondent pas", 
+                "Erreur de validation", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Préparation et exécution de la requête d'insertion
+        String sql = """
+            UPDATE utilisateurs
+            SET first_name = ?, last_name = ?, email = ?, password = ?
+            WHERE id = ?
+            """;
+        
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                
+            pstmt.setString(1, firstName);
+            pstmt.setString(2, lastName);
+            pstmt.setString(3, email);
+            pstmt.setString(4, password);
+            pstmt.setInt(5, userId);  // Met l'ID de l'utilisateur à mettre à jour
+            
+            int rowsAffected = pstmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                JOptionPane.showMessageDialog(this, 
+                    "Enregistrement réussi!", 
+                    "Succès", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Échec de l'enregistrement", 
+                    "Erreur", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+                
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, 
+                "Erreur lors de l'enregistrement : " + e.getMessage(), 
+                "Erreur", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
-	private JTextField createTextField(String placeholder, int x, int y) {
+    private JTextField createTextField(String placeholder, int x, int y) {
         JTextField textField = new JTextField(placeholder);
         textField.setBounds(x, y, 292, 38);
         textField.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -231,11 +272,10 @@ public class Modification extends JFrame {
         return passwordField;
     }
 
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Modification registrationForm = new Modification();
-            registrationForm.setVisible(true);
+            Modification modification = new Modification(1); // Exemple avec l'ID de l'utilisateur
+            modification.setVisible(true);
         });
     }
 }

@@ -48,7 +48,8 @@ public class Welcome extends JFrame {
         modifyMenuItem.addActionListener(e -> {
             dispose(); // Ferme la fenêtre Welcome
             SwingUtilities.invokeLater(() -> {
-                Modification modificationForm = new Modification();
+            	Modification modificationForm = new Modification(userEmail);
+
                 modificationForm.setVisible(true);
             });
         });

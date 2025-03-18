@@ -20,7 +20,8 @@ jobs:
       uses: actions/setup-java@v2  # Utilise l'action setup-java pour installer JDK
       with:
         java-version: '23'  # Spécifie que vous voulez utiliser JDK 23.0.2
-        distribution: 'adoptopenjdk'  # Utilisation d'AdoptOpenJDK, ou vous pouvez utiliser d'autres distributions comme Zulu OpenJDK ou Amazon Corretto
+        distribution: 'adoptium'  # Utilise Adoptium à la place d'AdoptOpenJDK
+
 
     # Mentionner Eclipse comme IDE utilisé
     - name: Build Java project using Eclipse IDE tools

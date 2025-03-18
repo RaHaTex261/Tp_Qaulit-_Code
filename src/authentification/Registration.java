@@ -147,8 +147,8 @@ public class Registration extends JFrame {
     	    
     	    // Préparation et exécution de la requête d'insertion
     	    String sql = """
-    	        INSERT INTO utilisateurs (first_name, last_name, email, password, statut)
-    	        VALUES (?, ?, ?, ?, 0)
+    	        INSERT INTO utilisateurs (first_name, last_name, email, password)
+    	        VALUES (?, ?, ?, ?)
     	        """;
     	    
     	    try (Connection conn = getConnection();

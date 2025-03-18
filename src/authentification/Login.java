@@ -139,8 +139,8 @@ public class Login extends JFrame {
 		        if (validateLogin(email, password)) {
 		            JOptionPane.showMessageDialog(null, "Vous êtes connecté !");
 
-		            // Créer et afficher la fenêtre Welcome
-		            Welcome welcomeForm = new Welcome();
+		            // Ouvrir la fenêtre Welcome en passant l'email de l'utilisateur connecté
+		            Welcome welcomeForm = new Welcome(email);
 		            welcomeForm.setVisible(true);
 
 		            // Fermer la fenêtre de connexion
@@ -148,6 +148,7 @@ public class Login extends JFrame {
 		        } else {
 		            JOptionPane.showMessageDialog(null, "Email ou mot de passe incorrect.");
 		        }
+
 		    }
 		});
 
@@ -240,7 +241,7 @@ public class Login extends JFrame {
 
 	        try {
 	            // Vérification des identifiants
-	            String sql = "SELECT email, password FROM utilisateurs WHERE email = ? AND statut = 0";
+	            String sql = "SELECT email, password FROM utilisateurs WHERE email = ?";
 	            PreparedStatement pstmt = conn.prepareStatement(sql);
 	            pstmt.setString(1, email.trim());
 
@@ -255,11 +256,7 @@ public class Login extends JFrame {
 	                    storedPassword.equals(password.trim())) {
 	                    isValid = true;
 
-	                    // Mise à jour du statut si les identifiants sont valides
-	                    sql = "UPDATE utilisateurs SET statut = 1 WHERE email = ?";
-	                    PreparedStatement pstmt2 = conn.prepareStatement(sql);
-	                    pstmt2.setString(1, email.trim());
-	                    pstmt2.executeUpdate();
+	                  
 	                }
 	            }
 

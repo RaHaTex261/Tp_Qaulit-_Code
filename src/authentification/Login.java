@@ -19,7 +19,7 @@ public class Login extends JFrame {
 	private JPanel loginPanel;
 	private JButton btnSignIn;
 	private JButton btnSignup;
-	private JTextField txtCopyrightA;
+	
 
 	/**
 	 * Constructeur de la classe Login. Initialise l'interface graphique de la
@@ -124,13 +124,6 @@ public class Login extends JFrame {
 		btnSignIn.setBackground(Color.BLUE);
 		btnSignIn.setForeground(Color.WHITE);
 		loginPanel.add(btnSignIn);
-
-		btnSignup = new JButton("SignUp");
-		btnSignup.setBounds(50, 374, 292, 38);
-		btnSignup.setFont(new Font("Arial", Font.PLAIN, 16));
-		btnSignup.setBackground(Color.RED);
-		btnSignup.setForeground(Color.WHITE);
-
 		btnSignIn.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
@@ -151,6 +144,25 @@ public class Login extends JFrame {
 		        }
 		    }
 		});
+
+		btnSignup = new JButton("SignUp");
+		btnSignup.setBounds(50, 374, 292, 38);
+		btnSignup.setFont(new Font("Arial", Font.PLAIN, 16));
+		btnSignup.setBackground(Color.RED);
+		btnSignup.setForeground(Color.WHITE);
+		btnSignup.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        // Ouvrir la fenêtre d'inscription
+		        Registration registrationForm = new Registration();
+		        registrationForm.setVisible(true);
+
+		        // Fermer la fenêtre de connexion (optionnel)
+		        dispose();
+		    }
+		});
+
+		
 		loginPanel.add(btnSignup);
 		
 		/**
@@ -193,26 +205,7 @@ public class Login extends JFrame {
 			txtUserName.requestFocusInWindow();
 		});
 
-		btnSignIn.addActionListener(new ActionListener() {
-			/**
-			 * Gère l'événement lors du clic sur le bouton de connexion. Valide l'email et
-			 * le mot de passe et affiche un message de connexion réussi ou échoué.
-			 */
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String email = txtUserName.getText();
-				String password = String.valueOf(txtPassword.getPassword());
-
-				if (validateLogin(email, password)) {
-					JOptionPane.showMessageDialog(null, "Vous êtes connecté !");
-
-					dispose();
-
-				} else {
-					JOptionPane.showMessageDialog(null, "Email ou mot de passe incorrect.");
-				}
-			}
-		});
+		
 		
 		 // Footer avec le copyright
         JLabel footerLabel = new JLabel("Copyright A11 & RaHaTex", SwingConstants.CENTER);
@@ -235,7 +228,7 @@ public class Login extends JFrame {
 				throw new CustomException("L'email doit contenir un '@'.");
 			}
 
-			BufferedReader reader = new BufferedReader(new FileReader("auth.db"));
+			BufferedReader reader = new BufferedReader(new FileReader("auth.sqlite"));
 			String line;
 
 			while ((line = reader.readLine()) != null) {

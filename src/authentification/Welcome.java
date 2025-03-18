@@ -4,9 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.*;
 
 public class Welcome extends JFrame {
     private static final long serialVersionUID = 1L;
+    
 
     public Welcome() {
         // Titre de la fenêtre
@@ -19,8 +21,15 @@ public class Welcome extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
+        // Récupérer les informations de l'utilisateur
+        String userInfo = getUserInfo("testmande");  // Remplacer "testmande" par l'email ou l'identifiant réel de l'utilisateur
+
+        // Séparer la chaîne récupérée par le point-virgule et afficher la première partie
+        String[] userParts = userInfo.split(";");
+        String firstPart = userParts.length > 0 ? userParts[0] : "Utilisateur inconnu";
+
         // Message de bienvenue
-        JLabel welcomeLabel = new JLabel("Bienvenue !", SwingConstants.CENTER);
+        JLabel welcomeLabel = new JLabel("Bienvenue, " + firstPart, SwingConstants.CENTER);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
         // Ajout du message au panneau
@@ -50,7 +59,7 @@ public class Welcome extends JFrame {
 
         // Création du menu
         JMenu optionsMenu = new JMenu("Options");
-        
+
         // Option "Déconnexion"
         JMenuItem logoutMenuItem = new JMenuItem("Déconnexion");
         logoutMenuItem.addActionListener(new ActionListener() {
@@ -107,10 +116,31 @@ public class Welcome extends JFrame {
         setJMenuBar(menuBar);
     }
 
+    // Méthode pour récupérer les informations de l'utilisateur depuis la base de données
+    private String getUserInfo(String email) {
+        String userInfo = "";
+
+        try (Connection connection = DriverManager.getConnection("jdbc:sqlite:auth.db")) {
+            String query = "SELECT user_data FROM users WHERE email = ?";  // Assurez-vous que le champ 'user_data' contient les informations formatées avec ';'
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setString(1, email);
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    userInfo = rs.getString("user_data");  // Récupère la chaîne complète
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return userInfo;
+    }
+
     public static void main(String[] args) {
         // Création et affichage de la fenêtre
         SwingUtilities.invokeLater(() -> {
-            Welcome frame = new Welcome();
+        	Welcome frame = new Welcome();
             frame.setVisible(true);
         });
     }

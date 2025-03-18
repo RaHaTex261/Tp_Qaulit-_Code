@@ -26,14 +26,18 @@ jobs:
       run: |
         wget https://github.com/xerial/sqlite-jdbc/releases/download/3.42.0.0/sqlite-jdbc-3.42.0.0.jar  # Télécharge le driver JDBC pour SQLite
 
+    - name: Install JUnit 5
+      run: |
+        wget https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.8.2/junit-platform-console-standalone-1.8.2.jar -O junit-platform-console-standalone.jar  # Télécharge JUnit 5
+
     - name: Compile Java files
       run: |
         mkdir -p bin  # Crée le répertoire bin pour les fichiers compilés
-        javac -d bin -cp ".:sqlite-jdbc-3.42.0.0.jar" src/authentification/*.java  # Compile les fichiers .java avec le driver SQLite
+        javac -d bin -cp ".:sqlite-jdbc-3.42.0.0.jar:junit-platform-console-standalone.jar" src/authentification/*.java  # Compile les fichiers .java avec le driver SQLite et JUnit 5
 
     - name: Run tests
       run: |
-        java -cp ".:bin:sqlite-jdbc-3.42.0.0.jar" org.junit.runner.JUnitCore TestClassName  # Exécute vos tests avec le driver JDBC SQLite
+        java -cp ".:bin:sqlite-jdbc-3.42.0.0.jar:junit-platform-console-standalone.jar" org.junit.platform.console.ConsoleLauncher --scan-classpath  # Exécute vos tests avec JUnit 5 et le driver JDBC SQLite
 
   deploy:
     needs: build  # Assure que l'étape de déploiement se fait uniquement après que le build soit terminé avec succès
@@ -52,7 +56,7 @@ jobs:
     - name: Build and package the application
       run: |
         mkdir -p bin
-        javac -d bin -cp ".:sqlite-jdbc-3.42.0.0.jar" src/authentification/*.java  # Compile les fichiers source Java
+        javac -d bin -cp ".:sqlite-jdbc-3.42.0.0.jar:junit-platform-console-standalone.jar" src/authentification/*.java  # Compile les fichiers source Java
 
     - name: Create JAR package
       run: |

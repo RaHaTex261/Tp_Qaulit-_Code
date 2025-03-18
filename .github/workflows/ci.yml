@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-java@v2  # Utilise l'action setup-java pour installer JDK
       with:
         java-version: '23'  # Spécifie que vous voulez utiliser JDK 23.0.2
-        distribution: 'zulu'  # Utilisation de Zulu OpenJDK (une des distributions bien supportées)
+        distribution: 'adoptopenjdk'  # Utilisation d'AdoptOpenJDK, ou vous pouvez utiliser d'autres distributions comme Zulu OpenJDK ou Amazon Corretto
 
     - name: Install SQLite JDBC Driver
       run: |
@@ -29,7 +29,7 @@ jobs:
     - name: Compile Java files
       run: |
         mkdir -p bin  # Crée le répertoire bin pour les fichiers compilés
-        javac -d bin -cp ".:sqlite-jdbc-3.42.0.0.jar" src/*.java  # Compile les fichiers .java avec le driver SQLite
+        javac -d bin -cp ".:sqlite-jdbc-3.42.0.0.jar" src/authentification/*.java  # Compile les fichiers .java avec le driver SQLite
 
     - name: Run tests
       run: |
@@ -47,12 +47,12 @@ jobs:
       uses: actions/setup-java@v2  # Installe JDK 23
       with:
         java-version: '23'  # Spécifie la version de JDK
-        distribution: 'zulu'  # Utilisation de Zulu OpenJDK
+        distribution: 'adoptopenjdk'  # Utilisation de la distribution AdoptOpenJDK
 
     - name: Build and package the application
       run: |
         mkdir -p bin
-        javac -d bin -cp ".:sqlite-jdbc-3.42.0.0.jar" src/*.java  # Compile les fichiers source Java
+        javac -d bin -cp ".:sqlite-jdbc-3.42.0.0.jar" src/authentification/*.java  # Compile les fichiers source Java
 
     - name: Create JAR package
       run: |

@@ -9,7 +9,7 @@ import org.sqlite.SQLiteDataSource;
 
 public class Database {
 	private Connection conn;
-	private static final String DB_URL = "jdbc:sqlite:auth.db";
+	private static final String DB_URL = "jdbc:sqlite:auth.sqlite";
 	private static final int MAX_RETRIES = 3;
 	private static final int RETRY_DELAY = 1000; // 1 seconde
 

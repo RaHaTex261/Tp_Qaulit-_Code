@@ -23,7 +23,7 @@ public class Registration extends JFrame {
     private JButton btnRegister;
     private JButton btnReset;
 
-    private static Connection getConnection() {
+    static Connection getConnection() {
         try {
             if (conn == null || conn.isClosed()) {
                 conn = DriverManager.getConnection(DB_URL);
@@ -147,8 +147,8 @@ public class Registration extends JFrame {
     	    
     	    // Préparation et exécution de la requête d'insertion
     	    String sql = """
-    	        INSERT INTO utilisateurs (first_name, last_name, email, password)
-    	        VALUES (?, ?, ?, ?)
+    	        INSERT INTO utilisateurs (first_name, last_name, email, password, statut)
+    	        VALUES (?, ?, ?, ?, 0)
     	        """;
     	    
     	    try (Connection conn = getConnection();

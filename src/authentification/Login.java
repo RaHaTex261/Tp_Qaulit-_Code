@@ -4,6 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Classe représentant la fenêtre de connexion. Cette classe gère l'interface
@@ -19,6 +23,8 @@ public class Login extends JFrame {
 	private JPanel loginPanel;
 	private JButton btnSignIn;
 	private JButton btnSignup;
+	private PreparedStatement pstmt;
+	private ResultSet rs;
 	
 
 	/**
@@ -222,44 +228,71 @@ public class Login extends JFrame {
 	 * @return true si les informations de connexion sont correctes, false sinon.
 	 */
 	private boolean validateLogin(String email, String password) {
-		try {
+	    try {
+	        // Connexion à la base de données
+	        Connection conn = Registration.getConnection();
+	        if (conn == null) {
+	            throw new SQLException("Erreur de connexion à la base de données");
+	        }
 
-			if (email == null || !email.contains("@")) {
-				throw new CustomException("L'email doit contenir un '@'.");
-			}
+	        // Configuration de la transaction
+	        conn.setAutoCommit(false);
 
-			BufferedReader reader = new BufferedReader(new FileReader("auth.sqlite"));
-			String line;
+	        try {
+	            // Vérification des identifiants
+	            String sql = "SELECT email, password FROM utilisateurs WHERE email = ? AND statut = 0";
+	            PreparedStatement pstmt = conn.prepareStatement(sql);
+	            pstmt.setString(1, email.trim());
 
-			while ((line = reader.readLine()) != null) {
+	            ResultSet rs = pstmt.executeQuery();
 
-				String[] user = line.split(";");
+	            boolean isValid = false;
+	            if (rs.next()) {
+	                String storedEmail = rs.getString("email");
+	                String storedPassword = rs.getString("password");
 
-				if (user.length == 4) {
-					String storedEmail = user[2].trim();
-					String storedPassword = user[3].trim();
+	                if (storedEmail.equalsIgnoreCase(email.trim()) && 
+	                    storedPassword.equals(password.trim())) {
+	                    isValid = true;
 
-					if (storedEmail.equalsIgnoreCase(email.trim()) && storedPassword.equals(password.trim())) {
+	                    // Mise à jour du statut si les identifiants sont valides
+	                    sql = "UPDATE utilisateurs SET statut = 1 WHERE email = ?";
+	                    PreparedStatement pstmt2 = conn.prepareStatement(sql);
+	                    pstmt2.setString(1, email.trim());
+	                    pstmt2.executeUpdate();
+	                }
+	            }
 
-						reader.close();
-						return true;
-					}
-				}
-			}
+	            // Validation de la transaction
+	            conn.commit();
+	            return isValid;
 
-			reader.close();
-			throw new CustomException("Email ou mot de passe incorrect.");
+	        } catch (SQLException e) {
+	            // Annulation de la transaction en cas d'erreur
+	            conn.rollback();
+	            throw e;
+	        } finally {
+	            // Fermeture des ressources
+	            try {
+	                if (rs != null) {
+	                    ((ResultSet)rs).close();
+	                }
+	                if (pstmt != null) {
+	                    ((PreparedStatement)pstmt).close();
+	                }
+	                conn.close();
+	            } catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	        }
 
-		} catch (IOException e) {
-
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Erreur d'accès au fichier des utilisateurs.");
-		} catch (CustomException e) {
-
-			JOptionPane.showMessageDialog(null, e.getMessage());
-		}
-
-		return false;
+	    } catch (SQLException e) {
+	        JOptionPane.showMessageDialog(null, 
+	            "Erreur lors de la connexion : " + e.getMessage(),
+	            "Erreur", 
+	            JOptionPane.ERROR_MESSAGE);
+	        return false;
+	    }
 	}
 
 	/**

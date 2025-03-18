@@ -21,15 +21,9 @@ public class Welcome extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        // Récupérer les informations de l'utilisateur
-        String userInfo = getUserInfo("testmande");  // Remplacer "testmande" par l'email ou l'identifiant réel de l'utilisateur
-
-        // Séparer la chaîne récupérée par le point-virgule et afficher la première partie
-        String[] userParts = userInfo.split(";");
-        String firstPart = userParts.length > 0 ? userParts[0] : "Utilisateur inconnu";
 
         // Message de bienvenue
-        JLabel welcomeLabel = new JLabel("Bienvenue, " + firstPart, SwingConstants.CENTER);
+        JLabel welcomeLabel = new JLabel("Bienvenue, " , SwingConstants.CENTER);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
         // Ajout du message au panneau

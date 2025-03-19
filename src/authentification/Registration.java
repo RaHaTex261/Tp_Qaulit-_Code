@@ -8,9 +8,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * 
  * Classe représentant un formulaire d'inscription pour l'application.
  * Cette classe gère l'interface utilisateur permettant à un utilisateur de s'inscrire
  * en renseignant son prénom, son nom, son adresse e-mail, et son mot de passe.
@@ -21,78 +22,44 @@ import java.sql.SQLException;
  * @author TEX BELOHA
  * @version 2025
  */
-
 public class Registration extends JFrame {
-	/**
-	 * UID pour la sérialisation de la classe (obligatoire pour certaines opérations de sérialisation).
-	 */
-	private static final long serialVersionUID = 1L;
+    /** UID pour la sérialisation de la classe */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Chemin d'accès au fichier de base de données SQLite.
-	 * Ce fichier contient les informations nécessaires pour la gestion des utilisateurs.
-	 */
-	private static final String FILE_PATH = "auth.sqlite";
+    /** Chemin d'accès au fichier de base de données SQLite */
+    private static final String FILE_PATH = "auth.sqlite";
 
-	/**
-	 * URL de connexion à la base de données SQLite, utilisant le chemin spécifié ci-dessus.
-	 * Cette URL est utilisée pour établir une connexion avec la base de données.
-	 */
-	private static final String DB_URL = "jdbc:sqlite:" + FILE_PATH;
+    /** URL de connexion à la base de données SQLite */
+    private static final String DB_URL = "jdbc:sqlite:" + FILE_PATH;
 
-	/**
-	 * Objet de connexion à la base de données.
-	 * Cet objet est utilisé pour effectuer des opérations de base de données.
-	 */
-	private static Connection conn;
+    /** Objet de connexion à la base de données */
+    private static Connection conn;
 
-	/**
-	 * Champ de texte pour la saisie du prénom de l'utilisateur.
-	 * L'utilisateur entre son prénom lors de l'inscription.
-	 */
-	private JTextField txtFirstName;
+    /** Champ de texte pour la saisie du prénom */
+    private JTextField txtFirstName;
 
-	/**
-	 * Champ de texte pour la saisie du nom de famille de l'utilisateur.
-	 * L'utilisateur entre son nom de famille lors de l'inscription.
-	 */
-	private JTextField txtLastName;
+    /** Champ de texte pour la saisie du nom */
+    private JTextField txtLastName;
 
-	/**
-	 * Champ de texte pour la saisie de l'email de l'utilisateur.
-	 * L'utilisateur entre son adresse e-mail lors de l'inscription.
-	 */
-	private JTextField txtEmail;
+    /** Champ de texte pour la saisie de l'email */
+    private JTextField txtEmail;
 
-	/**
-	 * Champ de texte pour la saisie du mot de passe de l'utilisateur.
-	 * L'utilisateur entre son mot de passe lors de l'inscription.
-	 */
-	private JPasswordField txtPassword;
+    /** Champ de texte pour la saisie du mot de passe */
+    private JPasswordField txtPassword;
 
-	/**
-	 * Champ de texte pour la saisie de la confirmation du mot de passe.
-	 * L'utilisateur doit entrer à nouveau son mot de passe pour confirmation.
-	 */
-	private JPasswordField txtConfirmPassword;
+    /** Champ de texte pour la confirmation du mot de passe */
+    private JPasswordField txtConfirmPassword;
 
-	/**
-	 * Bouton pour soumettre le formulaire d'inscription.
-	 * Lorsque l'utilisateur clique dessus, ses informations sont enregistrées.
-	 */
-	private JButton btnRegister;
+    /** Bouton pour soumettre le formulaire */
+    private JButton btnRegister;
 
-	/**
-	 * Bouton pour réinitialiser le formulaire d'inscription.
-	 * Lorsque l'utilisateur clique dessus, tous les champs sont réinitialisés.
-	 */
-	private JButton btnReset;
-
+    /** Bouton pour réinitialiser le formulaire */
+    private JButton btnReset;
 
     /**
      * Établit une connexion à la base de données SQLite.
      * 
-     * @return La connexion à la base de données.
+     * @return La connexion à la base de données
      */
     static Connection getConnection() {
         try {
@@ -102,7 +69,10 @@ public class Registration extends JFrame {
             }
             return conn;
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Erreur lors de la connexion à la base de données : " + e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                "Erreur lors de la connexion à la base de données : " + e.getMessage(), 
+                "Erreur", 
+                JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }
@@ -145,7 +115,7 @@ public class Registration extends JFrame {
     }
 
     /**
-     * Constructeur de la classe Registration. Configure l'interface graphique et initialise les composants.
+     * Constructeur de la classe Registration.
      */
     public Registration() {
         setTitle("Registration");
@@ -229,6 +199,25 @@ public class Registration extends JFrame {
             return;
         }
         
+        // Validation du mot de passe robuste
+        if (!isValidStrongPassword(password)) {
+            StringBuilder errorMessage = new StringBuilder(
+                "<html>Votre mot de passe doit respecter ces critères:<br>" +
+                "- Au moins 8 caractères<br>" +
+                "- Contenir au moins une majuscule<br>" +
+                "- Contenir au moins une minuscule<br>" +
+                "- Contenir au moins un chiffre<br>" +
+                "- Contenir au moins un caractère spécial (@#$%^&+=)<br>" +
+                "- Ne pas contenir d'espaces</html>"
+            );
+            
+            JOptionPane.showMessageDialog(this, 
+                errorMessage.toString(), 
+                "Mot de passe invalide", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         if (!password.equals(confirmPassword)) {
             JOptionPane.showMessageDialog(this, 
                 "Les mots de passe ne correspondent pas", 
@@ -243,9 +232,9 @@ public class Registration extends JFrame {
             VALUES (?, ?, ?, ?)
             """;
         
-        try (Connection conn = getConnection();
+        try (Connection conn = getConnection(); 
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                
+            
             pstmt.setString(1, firstName);
             pstmt.setString(2, lastName);
             pstmt.setString(3, email);
@@ -265,7 +254,6 @@ public class Registration extends JFrame {
                     "Erreur", 
                     JOptionPane.ERROR_MESSAGE);
             }
-                
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, 
                 "Erreur lors de l'enregistrement : " + e.getMessage(), 
@@ -275,12 +263,25 @@ public class Registration extends JFrame {
     }
 
     /**
-     * Crée un champ de texte avec un texte d'espace réservé et un gestionnaire d'événements pour la mise à jour du texte.
+     * Vérifie si le mot de passe est robuste selon les critères définis.
      * 
-     * @param placeholder Le texte d'espace réservé affiché dans le champ de texte.
-     * @param x La position en x du champ de texte.
-     * @param y La position en y du champ de texte.
-     * @return Le champ de texte créé.
+     * @param password Le mot de passe à valider
+     * @return true si le mot de passe est valide, false sinon
+     */
+    private boolean isValidStrongPassword(String password) {
+        String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(password);
+        return matcher.matches();
+    }
+
+    /**
+     * Crée un champ de texte avec un texte d'espace réservé et un gestionnaire d'événements.
+     * 
+     * @param placeholder Le texte d'espace réservé
+     * @param x La position en x
+     * @param y La position en y
+     * @return Le champ de texte créé
      */
     private JTextField createTextField(String placeholder, int x, int y) {
         JTextField textField = new JTextField(placeholder);
@@ -305,12 +306,12 @@ public class Registration extends JFrame {
     }
 
     /**
-     * Crée un champ de mot de passe avec un texte d'espace réservé et un gestionnaire d'événements pour la mise à jour du texte.
+     * Crée un champ de mot de passe avec un texte d'espace réservé et un gestionnaire d'événements.
      * 
-     * @param placeholder Le texte d'espace réservé affiché dans le champ de mot de passe.
-     * @param x La position en x du champ de mot de passe.
-     * @param y La position en y du champ de mot de passe.
-     * @return Le champ de mot de passe créé.
+     * @param placeholder Le texte d'espace réservé
+     * @param x La position en x
+     * @param y La position en y
+     * @return Le champ de mot de passe créé
      */
     private JPasswordField createPasswordField(String placeholder, int x, int y) {
         JPasswordField passwordField = new JPasswordField(placeholder);
@@ -344,9 +345,9 @@ public class Registration extends JFrame {
     }
 
     /**
-     * Méthode principale qui lance l'application en affichant le formulaire d'inscription.
+     * Méthode principale qui lance l'application.
      * 
-     * @param args Les arguments de la ligne de commande (non utilisés ici).
+     * @param args Les arguments de la ligne de commande
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

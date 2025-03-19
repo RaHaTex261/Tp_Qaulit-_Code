@@ -109,6 +109,24 @@ public class Login extends JFrame {
                 }
             }
         });
+        
+     // Label pour afficher le message d'erreur
+        JLabel lblError = new JLabel("");
+        lblError.setForeground(Color.RED);
+        lblError.setBounds(45, 160, 292, 20);
+        
+     // Vérification de la présence de '@' dans l'email
+        txtUserName.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String text = txtUserName.getText();
+                if (!text.contains("@")) {
+                    lblError.setText("L'email doit contenir un '@'.");
+                } else {
+                    lblError.setText("");
+                }
+            }
+        });
         loginPanel.add(txtUserName);
 
         // Champ de texte pour le mot de passe
